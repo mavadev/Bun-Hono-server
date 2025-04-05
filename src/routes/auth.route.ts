@@ -20,14 +20,14 @@ const registerSchema = z.object({
 		message: 'La contraseña debe tener al menos 8 caracteres',
 	}),
 });
+
 // Ruta para el registro de usuarios
 authRouter.post('/register', zValidator('json', registerSchema), async context => {
 	// Obtener los datos del usuario
 	const { username, email, password } = await context.req.json();
 
-	// Validar que el correo sea válido
-
 	// Verificar que el correo no esté registrado
+
 	// Hashear la contraseña
 	// Crear un nuevo usuario
 	// Guardar el usuario en la base de datos
