@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import { Hono } from 'hono';
+import { eq } from 'drizzle-orm';
 import { zValidator } from '@hono/zod-validator';
+
+import { db } from '../db';
+import { usersTable } from '../db/schema';
 
 export const authRouter = new Hono();
 
@@ -27,16 +31,17 @@ authRouter.post('/register', zValidator('json', registerSchema), async context =
 	const { username, email, password } = await context.req.json();
 
 	// Verificar que el correo no esté registrado
+	const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email));
+	if (user) {
+		return context.json({ message: 'El usuario ya está registrado' }, 400);
+	}
 
 	// Hashear la contraseña
 	// Crear un nuevo usuario
 	// Guardar el usuario en la base de datos
 	// Enviar un correo de verificación
 
-	return context.json({
-		email,
-		password,
-	});
+	return context.json(user);
 });
 
 authRouter.post('/login', context => {
