@@ -5,6 +5,9 @@ export const usersTable = sqliteTable('users', {
 	username: text('username').unique(),
 	email: text('email').unique().notNull(),
 	password: text('password').notNull(),
+	verification_token: text('verification_token'),
+	verification_expires: integer('verification_expires'),
+	verified: integer('verified', { mode: 'boolean' }).default(false),
 });
 
 export type InsertUser = typeof usersTable.$inferInsert;
