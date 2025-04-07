@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { createInsertSchema } from 'drizzle-zod';
 import { usersTable } from '../db/schema';
 
+// REGISTER
 export const registerSchema = createInsertSchema(usersTable, {
 	username: z
 		.string({ message: 'El nombre de usuario es obligatorio' })
@@ -20,6 +21,7 @@ export const registerSchema = createInsertSchema(usersTable, {
 });
 export type UserRegisterSchema = z.infer<typeof registerSchema>;
 
+// VERIFY
 export const verifySchema = z.object({
 	token: z
 		.string({ message: 'El token es obligatorio' })
@@ -28,3 +30,10 @@ export const verifySchema = z.object({
 		})
 		.trim(),
 });
+
+// LOGIN
+export const loginSchema = registerSchema.pick({
+	email: true,
+	password: true,
+});
+export type UserLoginSchema = z.infer<typeof loginSchema>;

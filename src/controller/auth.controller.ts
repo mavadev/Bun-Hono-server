@@ -81,3 +81,22 @@ export const verifyUser = async (context: Context) => {
 
 	return context.json({ message: 'Usuario verificado' }, 200);
 };
+
+export const loginUser = async (context: Context) => {
+	// Obtener los datos del usuario
+	const { email, password } = await context.req.json();
+
+	// Verificar si el usuario existe en la base de datos
+	const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email));
+	if (!user) {
+		return context.json({ message: 'El usuario no existe' }, 400);
+	}
+
+	// Verificar si la contraseña es correcta
+	const isPasswordValid = await Bun.password.verify(password, user.password);
+	if (!isPasswordValid) {
+		return context.json({ message: 'La contraseña es incorrecta' }, 400);
+	}
+
+	return context.json({ message: 'Iniciaste Sesión con éxito!' });
+};
