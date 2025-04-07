@@ -18,5 +18,13 @@ export const registerSchema = createInsertSchema(usersTable, {
 		message: 'La contraseña debe tener al menos 8 caracteres',
 	}),
 });
-
 export type UserRegisterSchema = z.infer<typeof registerSchema>;
+
+export const verifySchema = z.object({
+	token: z
+		.string({ message: 'El token es obligatorio' })
+		.min(6, {
+			message: 'El token debe tener al menos 6 caracteres',
+		})
+		.trim(),
+});

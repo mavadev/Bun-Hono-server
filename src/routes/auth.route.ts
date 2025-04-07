@@ -1,12 +1,15 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import { registerSchema } from '../validators/auth.validator';
-import { registerUser } from '../controller/auth.controller';
+import { registerSchema, verifySchema } from '../validators/auth.validator';
+import { registerUser, verifyUser } from '../controller/auth.controller';
 
 export const authRouter = new Hono();
 
 // Ruta para el registro de usuarios
 authRouter.post('/register', zValidator('json', registerSchema), registerUser);
+
+// Ruta para la verificación de cuenta
+authRouter.post('/verify/:token', zValidator('param', verifySchema), verifyUser);
 
 authRouter.post('/login', context => {
 	// Obtener los datos del usuario

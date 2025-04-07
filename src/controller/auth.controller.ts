@@ -52,3 +52,32 @@ export const registerUser = async (context: Context) => {
 
 	return context.json(newUser, 201);
 };
+
+export const verifyUser = async (context: Context) => {
+	const { token } = context.req.param();
+
+	// Verificar que el token no esté expirado
+	const [user] = await db.select().from(usersTable).where(eq(usersTable.verification_token, token!));
+	if (!user) {
+		return context.json({ message: 'El token no existe' }, 400);
+	}
+
+	// Token expirado
+	if (user.verification_expires! < Date.now()) {
+		return context.json({ message: 'El token está expirado' }, 400);
+	}
+
+	// Verificar que el usuario no esté verificado
+	if (user.verified) {
+		return context.json({ message: 'El usuario ya está verificado' }, 400);
+	}
+
+	// Actualizar el usuario
+	await db.update(usersTable).set({
+		verified: true,
+		verification_token: null,
+		verification_expires: null,
+	});
+
+	return context.json({ message: 'Usuario verificado' }, 200);
+};
