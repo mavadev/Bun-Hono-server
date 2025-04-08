@@ -7,6 +7,7 @@ import { hashPassword } from '../utils/hash';
 import { generateRandomToken } from '../utils/token';
 import { sendVerificationEmail } from '../services/email.service';
 import type { UserRegisterSchema } from '../validators/auth.validator';
+import { signJWT } from '../utils/jwt';
 
 export const registerUser = async (context: Context) => {
 	// Obtener los datos del usuario
@@ -98,5 +99,14 @@ export const loginUser = async (context: Context) => {
 		return context.json({ message: 'La contraseña es incorrecta' }, 400);
 	}
 
-	return context.json({ message: 'Iniciaste Sesión con éxito!' });
+	// Crear un token de autenticación JWT
+	const payload = {
+		id: user.id,
+		email: user.email,
+		username: user.username,
+		exp: Math.floor(Date.now() / 1000) + 60 * 60, // Token válido por 1 hora
+	};
+	const token = await signJWT(payload);
+
+	return context.json({ message: 'Iniciaste Sesión con éxito!', data: token }, 200);
 };

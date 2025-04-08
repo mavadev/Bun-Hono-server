@@ -14,10 +14,4 @@ authRouter.post('/verify/:token', zValidator('param', verifySchema), verifyUser)
 // Ruta para el inicio de sesión de usuario
 authRouter.post('/login', zValidator('json', loginSchema), loginUser);
 
-authRouter.post('/logout', context => {
-	return context.json({
-		message: 'Logout success!',
-	});
-});
-
 export default authRouter;
